@@ -116,7 +116,7 @@ class LendingApiTests(APITestCase):
         wallet = MobileWallet.objects.get(customer=self.customer.customer)
         self.assertEqual(wallet.amount, amount)
 
-        # create with existing loan offer
+        # create new offer while there's an existing loan offer
         amount = 500
         response = self.client.post(reverse("loan_offer"),
                                     data={"loan_product_id": self.loan_product.id, "amount": amount})
