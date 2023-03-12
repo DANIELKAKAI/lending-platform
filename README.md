@@ -12,6 +12,7 @@ djangorestframework 3.14.0
 
   [Python installation guide](https://www.python.org/downloads/)
 
+
 - Install virtualenv
 
 ```bash
@@ -54,4 +55,9 @@ python manage.py runserver
 
 ```shell
 python manage.py test
+```
+
+- Coverage
+```shell
+python manage.py test --with-coverage
 ```
