@@ -5,6 +5,10 @@ from customer.models import Customer, MobileWallet, LoanOffer
 from lending.models import LoanProduct
 import datetime
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
@@ -46,6 +50,7 @@ class LoanOfferSerializer(serializers.ModelSerializer):
         loan_product: LoanProduct = LoanProduct.objects.get(id=loan_product_id)
         if amount > loan_product.loan_limit:
             errors["amount"] = ["Amount requested greater than loan limit"]
+            logger.error("Amount requested greater than loan limit")
         existing_offer = LoanOffer.objects.filter(
             loan_product_id=loan_product_id, paid=False
         ).exists()
@@ -53,6 +58,7 @@ class LoanOfferSerializer(serializers.ModelSerializer):
             errors["loan_product"] = [
                 "You have an existing loan offer of similar product"
             ]
+            logger.error("You have an existing loan offer of similar product")
         if errors:
             raise serializers.ValidationError(errors)
         loan_offer = self.Meta.model(**validated_data)
@@ -66,6 +72,7 @@ class LoanOfferSerializer(serializers.ModelSerializer):
         )
         mobile_wallet.amount += amount
         mobile_wallet.save()
+        logger.info("Mobile wallet credited")
         return loan_offer
 
 
