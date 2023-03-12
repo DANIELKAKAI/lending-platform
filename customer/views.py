@@ -8,7 +8,12 @@ from rest_framework.status import HTTP_400_BAD_REQUEST
 from rest_framework.views import APIView
 
 from customer.models import Customer, MobileWallet, LoanOffer
-from customer.serializers import CustomerSerializer, MobileWalletSerializer, LoanOfferSerializer, PayLoanSerializer
+from customer.serializers import (
+    CustomerSerializer,
+    MobileWalletSerializer,
+    LoanOfferSerializer,
+    PayLoanSerializer,
+)
 from lending.models import LoanProduct
 
 
@@ -31,7 +36,9 @@ class CustomerView(APIView):
 
     def put(self, request, id):
         customer = get_object_or_404(self.queryset, id=id, user=request.user)
-        serializer = self.serializer_class(instance=customer, data=request.data, partial=True)
+        serializer = self.serializer_class(
+            instance=customer, data=request.data, partial=True
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -44,7 +51,9 @@ class MobileWalletView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, id):
-        wallet = get_object_or_404(self.queryset, id=id, customer=request.user.customer)
+        wallet = get_object_or_404(
+            self.queryset, id=id, customer=request.user.customer
+        )
         serializer = self.serializer_class(wallet)
         return Response(serializer.data)
 
@@ -56,8 +65,12 @@ class MobileWalletView(APIView):
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
     def put(self, request, id):
-        wallet = get_object_or_404(self.queryset, id=id, customer=request.user.customer)
-        serializer = self.serializer_class(wallet, data=request.data, partial=True)
+        wallet = get_object_or_404(
+            self.queryset, id=id, customer=request.user.customer
+        )
+        serializer = self.serializer_class(
+            wallet, data=request.data, partial=True
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

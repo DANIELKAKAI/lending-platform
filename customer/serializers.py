@@ -21,7 +21,9 @@ class MobileWalletSerializer(serializers.ModelSerializer):
 
     id = serializers.UUIDField(read_only=True)
     customer_id = serializers.UUIDField(read_only=True)
-    amount = serializers.DecimalField(read_only=True, max_digits=10, decimal_places=2)
+    amount = serializers.DecimalField(
+        read_only=True, max_digits=10, decimal_places=2
+    )
 
 
 class LoanOfferSerializer(serializers.ModelSerializer):
@@ -44,16 +46,24 @@ class LoanOfferSerializer(serializers.ModelSerializer):
         loan_product: LoanProduct = LoanProduct.objects.get(id=loan_product_id)
         if amount > loan_product.loan_limit:
             errors["amount"] = ["Amount requested greater than loan limit"]
-        existing_offer = LoanOffer.objects.filter(loan_product_id=loan_product_id, paid=False).exists()
+        existing_offer = LoanOffer.objects.filter(
+            loan_product_id=loan_product_id, paid=False
+        ).exists()
         if existing_offer:
-            errors["loan_product"] = ["You have an existing loan offer of similar product"]
+            errors["loan_product"] = [
+                "You have an existing loan offer of similar product"
+            ]
         if errors:
             raise serializers.ValidationError(errors)
         loan_offer = self.Meta.model(**validated_data)
         loan_offer.loan_product = loan_product
-        loan_offer.due_date = datetime.date.today() + datetime.timedelta(days=loan_product.duration)
+        loan_offer.due_date = datetime.date.today() + datetime.timedelta(
+            days=loan_product.duration
+        )
         loan_offer.save()
-        mobile_wallet = MobileWallet.objects.get(customer_id=loan_offer.customer_id)
+        mobile_wallet = MobileWallet.objects.get(
+            customer_id=loan_offer.customer_id
+        )
         mobile_wallet.amount += amount
         mobile_wallet.save()
         return loan_offer
@@ -72,7 +82,9 @@ class PayLoanSerializer(serializers.Serializer):
             loan_offer.paid = True
             loan_offer.save()
         if loan_offer.amount > data["amount"]:
-            raise serializers.ValidationError({"amount": "Amount Insufficient"})
+            raise serializers.ValidationError(
+                {"amount": "Amount Insufficient"}
+            )
         if loan_offer.amount < data["amount"]:
             raise serializers.ValidationError({"amount": "Amount is Excess"})
         return data
