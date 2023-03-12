@@ -62,7 +62,8 @@ python manage.py test
 python manage.py test --with-coverage
 ```
 
-##Working with Api example
+## Working with Api example
+
 Register Customer
 ```shell
 curl --location --request POST 'http://127.0.0.1:8000/user/register/' \
